@@ -1,0 +1,8 @@
+<div class="cafe-nav-box">
+    <h2>他のカフェ</h2>
+    <ul>
+        {% for other_cafe in cafes %}
+            <li><a href="../{{ other_cafe.id }}/index.html" data-cafe-id="{{ other_cafe.id }}">{{ other_cafe.name }}</a></li>
+        {% endfor %}
+    </ul>
+</div>

@@ -1,0 +1,8 @@
+venv_tiktok/
+__pycache__/
+*.pyc
+*.mp4
+*.wav
+*.txt
+*.jpg
+*.json

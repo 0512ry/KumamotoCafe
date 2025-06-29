@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ cafe.name }} - 熊本カフェ紹介</title>
+    <meta name="robots" content="noindex">
+    <link rel="stylesheet" href="../style.css"> <!-- Adjusted path for style.css -->
+</head>
+<body>
+    <header>
+        <h1><a href="../index.html">熊本カフェ紹介</a></h1>
+        <p>{{ cafe.name }}</p>
+    </header>
+    <div class="container">
+        <aside class="sidebar left-sidebar">
+            {% include "_cafe_navigation.html" %}
+        </aside>
+        <main class="main-content">
+            <section class="about">
+                <h2>{{ cafe.name }}</h2>
+                <p>{{ cafe.description }}</p>
+                <p><strong>基本情報:</strong></p>
+                <ul>
+                    {% for key, value in cafe.info.items() %}
+                    <li><strong>{{ key }}:</strong> 
+                        {% if cafe.google_maps_place_url and key == '住所' %}
+                        <a href="{{ cafe.google_maps_place_url }}" target="_blank">{{ value }}</a>
+                        {% elif key == '住所' and cafe.google_maps_url %}
+                        <a href="{{ cafe.google_maps_url }}" target="_blank">{{ value }}</a>
+                        {% else %}
+                        {{ value }}
+                        {% endif %}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </section>
+            <section class="menu">
+                <h2>メニュー</h2>
+                <p>{{ cafe.menu_summary }}</p>
+            </section>
+            <section class="gallery">
+                <h2>ギャラリー</h2>
+                <div class="images">
+                    {% if cafe.image_paths %}
+                        {% for image_path in cafe.image_paths %}
+                        <div class="gallery-item">
+                            <img src="{{ image_path }}" alt="{{ cafe.name }}のギャラリー画像" onclick="openModal(this.src)">
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <p>表示できる画像がありません。</p>
+                    {% endif %}
+                </div>
+            </section>
+            <section class="links">
+                <h2>関連リンク</h2>
+                <ul>
+                    <li><a href="{{ cafe.tiktok_url }}" target="_blank">元のTikTok動画を見る</a></li>
+                    {% if cafe.google_maps_url %}
+                    <li><a href="{{ cafe.google_maps_url }}" target="_blank">Googleマップで場所を見る</a></li>
+                    {% endif %}
+                    {% for name, url in cafe.links.items() %}
+                    <li><a href="{{ url }}" target="_blank">{{ name }}</a></li>
+                    {% endfor %}
+                </ul>
+            </section>
+        </main>
+        <aside class="sidebar right-sidebar">
+            <section class="map-embed">
+                <h2>場所</h2>
+                {% if cafe.google_maps_embed_url %}
+                <iframe
+                    width="100%"
+                    height="450"
+                    frameborder="0"
+                    style="border:0"
+                    src="{{ cafe.google_maps_embed_url | safe }}"
+                    allowfullscreen>
+                </iframe>
+                {% else %}
+                <p>Googleマップを埋め込むことができませんでした。</p>
+                {% endif %}
+            </section>
+            <section class="video-player">
+                <h2>TikTok動画</h2>
+                {% if cafe.embed_html %}
+                    {{ cafe.embed_html | safe }}
+                {% else %}
+                    <p>動画の読み込みに失敗しました。 <a href="{{ cafe.tiktok_url }}" target="_blank">TikTokで直接見る</a></p>
+                {% endif %}
+            </section>
+        </aside>
+    </div>
+
+    <!-- The Modal/Lightbox -->
+    <div id="myModal" class="modal">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <img class="modal-content" id="modalImg">
+    </div>
+
+    <footer>
+        <p>&copy; 2025 熊本カフェ紹介. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Lightbox script
+        var modal = document.getElementById('myModal');
+        var modalImg = document.getElementById("modalImg");
+
+        function openModal(src) {
+            modal.style.display = "block";
+            modalImg.src = src;
+        }
+
+        function closeModal() {
+            modal.style.display = "none";
+        }
+
+        // Close modal when clicking on the background
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+
+        // Highlight current cafe in sidebar
+        document.addEventListener('DOMContentLoaded', function() {
+            var pathParts = window.location.pathname.split('/');
+            var currentCafeId = pathParts[pathParts.length - 2]; // e.g., 'cafe1' from '/cafe1/index.html'
+
+            var sidebarLinks = document.querySelectorAll('.sidebar a');
+            sidebarLinks.forEach(function(link) {
+                var linkCafeId = link.getAttribute('data-cafe-id');
+                if (linkCafeId === currentCafeId) {
+                    link.parentNode.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
