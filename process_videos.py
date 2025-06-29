@@ -233,7 +233,7 @@ def process_cafe(cafe_details):
 
     # Run processing steps
     if download_video(cafe_details['tiktok_url'], video_path):
-        # extract_tiktok_metadata(cafe_details['tiktok_url'], output_dir, description_path, comments_path) # Temporarily disabled
+        extract_tiktok_metadata(cafe_details['tiktok_url'], output_dir, description_path, comments_path) # Enabled
         if extract_audio(video_path, audio_path):
             transcribe_audio(audio_path, transcript_path)
         perform_ocr_on_video(video_path, ocr_text_path)
